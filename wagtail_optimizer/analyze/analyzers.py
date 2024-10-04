@@ -247,6 +247,8 @@ class LoadTimeAnalyzer(BaseAnalyzer):
 class BaseMinifiedAnalyzer(BaseAnalyzer):
     title = _("Minified Analyzer")
     description = _("Analyze the HTML of pages, looking for pages that have assets which have not been minified")
+    SOUP_QUERY: tuple[str, dict] = ('html', {})
+    SOUP_ATTR: str = 'src'
     ERROR_MESSAGE: str = ""
     MIN_CHARS: int = 450
     RATIO: float = 0.05
@@ -274,46 +276,58 @@ class BaseMinifiedAnalyzer(BaseAnalyzer):
             return ''
         return response.text
     
-    def analyze_file(self, url: str, page: PageScraper):
-        url = page.page_url._replace(path=url).geturl()
-        text = self.fetch_data(url)
-        if not text:
-            logger.warning("Empty response from %s", url)
-            return
-        
-        if not self.is_minified(text):
-            self.add_error(
-                error_message=self.ERROR_MESSAGE,
-                page=page,
-                weight=0.98,
-                tag=AssetTag(
-                    src=url,
-                )
+    def analyze(self, pages: list[PageScraper]):
+        is_minified_dict = {}
+        asset_map = defaultdict(list)
+        for page in pages:
+            if not page.soup:
+                continue
+
+            tags = page.soup.find_all(
+                *self.SOUP_QUERY,
             )
+            for tag in tags:
+                url = tag.get(self.SOUP_ATTR)
+                if url:
+                    asset_map[url].append(page)
+
+        for url, page_list in asset_map.items():
+            if url not in is_minified_dict:
+                fetch_url = page.page_url\
+                    ._replace(path=url)\
+                    .geturl()
+                
+                data = self.fetch_data(fetch_url)
+                if not data:
+                    logger.warning("Empty response from %s", url)
+                    return
+
+                is_minified_dict[url] = self.is_minified(
+                    data,
+                )
+
+            if not is_minified_dict[url]:
+                for page in page_list:
+                    self.add_error(
+                        tag=AssetTag(
+                            selector=None,
+                            src=url,
+                        ),
+                        error_message=self.ERROR_MESSAGE,
+                        page=page,
+                        weight=0.98,
+                    )
 
 class CSSMinifiedAnalyzer(BaseMinifiedAnalyzer):
     ERROR_MESSAGE = _("CSS file is not minified")
-
-    def analyze_page(self, page: PageScraper):
-        if not page.soup:
-            return
-        
-        css_tags = page.soup.find_all('link', {'rel': 'stylesheet'})
-        for tag in css_tags:
-            if tag.get('href'):
-                self.analyze_file(tag['href'], page)
+    SOUP_QUERY = ('link', {'rel': 'stylesheet'})
+    SOUP_ATTR = 'href'
 
 class JSMinifiedAnalyzer(BaseMinifiedAnalyzer):
     ERROR_MESSAGE = _("JS file is not minified")
+    SOUP_QUERY = ('script', {'src': True})
+    SOUP_ATTR = 'src'
     RATIO = 0.025
-
-    def analyze_page(self, page: PageScraper):
-        if not page.soup:
-            return
-        
-        js_tags = page.soup.find_all('script', {'src': True})
-        for tag in js_tags:
-            self.analyze_file(tag['src'], page)
 
 class StatusCodeAnalyzer(BaseAnalyzer):
     title = _("Status Code Analyzer")
