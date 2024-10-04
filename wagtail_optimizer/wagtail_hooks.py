@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import itertools
 from django.urls import path, include, reverse, reverse_lazy
 from django.http import JsonResponse
 from django.views.generic import TemplateView
@@ -25,6 +26,10 @@ from wagtail.admin.views.generic.base import (
 from wagtail import hooks
 import json
 
+from .analyze import (
+    registry,
+    BaseAnalyzer,
+)
 from .models import (
     Analysis,
 )
@@ -182,7 +187,7 @@ class SEOReportView(BaseObjectMixin, WagtailAdminTemplateMixin, TemplateView):
                 "warnings": [],
             }
 
-        for error in self.object.single_page_errors:
+        for error in self.object.single_page_errors:            
             if error["page"] in pages_with_data:
                 pages_with_data[error["page"]]["errors"].append(
                     error,
@@ -211,6 +216,19 @@ class SEOReportView(BaseObjectMixin, WagtailAdminTemplateMixin, TemplateView):
                 pages_with_data[page]["warnings"].append(
                     warning,
                 )
+
+        for page, data in pages_with_data.items():
+            for error in itertools.chain(
+                data["errors"], data["warnings"],
+            ):
+                if "analyzer" in error \
+                    and not isinstance(error["analyzer"], BaseAnalyzer) \
+                    and "id" in error["analyzer"]:
+                    
+                    analyzer: BaseAnalyzer = registry.get_analyzer(
+                        error["analyzer"]["id"],
+                    )
+                    error["analyzer"] = analyzer()
 
         values = list(pages_with_data.values())
         values.sort(

@@ -7,9 +7,6 @@ from celery import (
 )
 from django.urls import reverse
 from django.conf import settings
-from django.utils.module_loading import (
-    import_string,
-)
 from django.utils.translation import (
     gettext_lazy as _,
 )
@@ -24,6 +21,7 @@ from .analyze import (
     errors,
     BaseAnalyzer,
     DEFAULT_ANALYZERS,
+    registry,
 )
 from .models import (
     Analysis as StoredAnalysis,
@@ -101,10 +99,11 @@ def run_analyzer(task: Task, title: str = None, notes: str = None, analyzers=Non
         except Exception as e:
             multi_page_errors.append(
                 errors.MultiPageError(
-                    error_message= errors.ERR_SCRAPIG_PAGE % {
-                        'error': str(e),
-                    },
+                    error_message= errors.ERR_SCRAPIG_PAGE,
                     pages=[page],
+                    data={
+                        "error": str(e),
+                    },
                 )
             )
         
@@ -114,7 +113,7 @@ def run_analyzer(task: Task, title: str = None, notes: str = None, analyzers=Non
         analyzers = DEFAULT_ANALYZERS
     
     analyzers: list[BaseAnalyzer] = list(map(
-        import_string,
+        registry.get_analyzer,
         analyzers,
     ))
 

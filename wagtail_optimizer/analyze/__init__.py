@@ -5,6 +5,7 @@ from .errors import (
     PageWarning,
 )
 from .analyzers import (
+    registry,
     BaseAnalyzer,
     TitleAnalyzer,
     DescriptionAnalyzer,

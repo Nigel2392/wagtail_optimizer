@@ -1,42 +1,21 @@
-{% load i18n %}
+{% load i18n wagtail_optimizer %}
 
-{% if error.tag %}
+{% format_error_data error as lines %}
+{% if lines %}
     <details>
         <summary class="seo-summary">
-            <strong>{{ error.error_message }}</strong>
-            {% if error.tag.text %}
-                <span>- {{ error.tag.text }}</span>
-            {% endif %}
+            {% include "./seo_error_message.html" %}
         </summary>
         <div class="seo-summary-meta">
-            {% if error.tag.text %}
+            {% for param, value in lines %}
                 <p>
-                    <strong>{% translate "Text:" %}</strong>
-                    {{ error.tag.text }}
+                    <strong>{{ param }}</strong>: {{ value }}
                 </p>
-            {% endif %}
-            {% if error.tag.src %}
-                <p>
-                    <strong>{% translate "Source:" %}</strong>
-                    {{ error.tag.src }}
-                </p>
-            {% endif %}
-            {% if error.tag.href %}
-                <p>
-                    <strong>{% translate "Href:" %}</strong>
-                    {{ error.tag.href }}
-                </p>
-            {% endif %}
-            {% if error.tag.selector %}
-                <p>
-                    <strong>{% translate "Selector:" %}</strong>
-                    {{ error.tag.selector }}
-                </p>
-            {% endif %}
+            {% endfor %}
         </div>
     </details>
 {% else %}
     <p>
-        <strong class="seo-text-large">{{ error.error_message }}</strong>
+        {% include "./seo_error_message.html" %}
     </p>
 {% endif %}

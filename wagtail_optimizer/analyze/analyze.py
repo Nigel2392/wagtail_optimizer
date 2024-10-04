@@ -1,28 +1,14 @@
-from django.utils.module_loading import (
-    import_string,
-)
 from django.utils.translation import (
     gettext_lazy as _,
 )
-
-from wagtail.models import (
-    Page, PageQuerySet,
-)
-
 from ..scraper import (
     PageScraper,
 )
-from .analyzers import (
-    BaseAnalyzer,
-    DEFAULT_ANALYZERS,
-)
 from .errors import (
-    BaseError,
     MultiPageError,
     MultiPageWarning,
     PageError,
     PageWarning,
-    ERR_SCRAPIG_PAGE,
 )
 
 class Analysis:
