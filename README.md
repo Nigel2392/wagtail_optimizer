@@ -14,11 +14,14 @@ Quick start
 
 2. Add 'wagtail_optimizer' to your INSTALLED_APPS setting like this:
 
-   ```
-   INSTALLED_APPS = [
-   ...,
-      'wagtail_optimizer',
-   ]
-   ```
+    ```python
+    INSTALLED_APPS = [
+    ...,
+       'wagtail_optimizer',
+    ]
+    ```
 
-3. Check out the new "SEO" tab in your wagtail admin settings menu.
+3. Install Celery and configure it to work with your Django project.
+   You can find more information on how to do this [here](http://docs.celeryproject.org/en/latest/django/index.html).
+
+4. Check out the new "SEO" tab in your wagtail admin settings menu and get started with generating SEO reports for your pages.
