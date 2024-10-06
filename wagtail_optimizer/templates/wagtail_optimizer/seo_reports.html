@@ -13,6 +13,7 @@
     <script src="{% static 'wagtail_optimizer/js/seo_reports.js' %}"></script>
     {{ reports_seo_scores|json_script:"reports-seo-scores" }}
     {{ reports_error_counts|json_script:"reports-error-counts" }}
+    {{ latest_analysis|json_script:"latest-analysis-seo-score" }}
 {% endblock %}
 
 {% block titletag %}{% translate "SEO Reports" %}{% endblock %}
@@ -33,6 +34,9 @@
         <div class="seo-charts">
             <div class="seo-chart">
                 <canvas id="seo-score-chart"></canvas>
+            </div>
+            <div class="seo-chart">
+                <canvas id="seo-current-score-chart"></canvas>
             </div>
             <div class="seo-chart">
                 <canvas id="seo-errors-chart"></canvas>

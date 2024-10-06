@@ -10,22 +10,23 @@ function parseJSONScript(id) {
     }
 }
 
+function parseScoreDate(score) {
+    const createdAt = new Date(score.created_at);
+    return createdAt.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const scores =parseJSONScript('reports-seo-scores');
     const errors =parseJSONScript('reports-error-counts');
+    const currentScore = parseJSONScript('latest-analysis-seo-score');
 
-    function parseScoreDate(score) {
-        const createdAt = new Date(score.created_at);
-        return createdAt.toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-        });
-    }
-
-    const config = {
+    const configScore = {
         "type": "line",
         "data": {
             "labels": scores.map(parseScoreDate),
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
     }
 
-    const configErrors = JSON.parse(JSON.stringify(config));
+    const configErrors = JSON.parse(JSON.stringify(configScore));
     configErrors.data.labels = errors.map(parseScoreDate);
     configErrors.data.datasets[0].label = "Errors";
     configErrors.data.datasets[0].data = errors.map(error => error.error_count);
@@ -85,8 +86,29 @@ document.addEventListener('DOMContentLoaded', function() {
     delete configErrors.options.scales.y.suggestedMax;
     delete configErrors.options.plugins.legend.display;
 
-    const ctx = document.getElementById('seo-score-chart').getContext('2d');
-    new Chart(ctx, config);
+    const configCurrentScore = {
+        "type": "doughnut",
+        "data": {
+            "labels": [currentScore.label],
+            "datasets": [{
+                "data": [currentScore.value, 100 - currentScore.value],
+                "backgroundColor": ["rgb(75, 192, 192)", "rgb(255, 99, 132)"],
+            }]
+        },
+        "options": {
+            "plugins": {
+                "legend": {
+                    "onClick": (e) => e.stopPropagation(),
+                }
+            },
+        },
+    }
+
+    const ctxScore = document.getElementById('seo-score-chart').getContext('2d');
+    new Chart(ctxScore, configScore);
+
+    const ctxCurrentScore = document.getElementById('seo-current-score-chart').getContext('2d');
+    new Chart(ctxCurrentScore, configCurrentScore);
 
     const ctxErrors = document.getElementById('seo-errors-chart').getContext('2d');
     new Chart(ctxErrors, configErrors);

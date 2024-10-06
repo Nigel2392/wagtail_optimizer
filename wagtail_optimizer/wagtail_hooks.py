@@ -81,6 +81,13 @@ class SEOReportsView(BaseListingView):
             )\
             .values("created_at", "error_count", "warning_count")
         
+        latest_analysis = Analysis.objects.order_by(
+            "-created_at",
+        ).first()
+        context["latest_analysis"] = {
+            "label": _("Latest SEO Score"),
+            "value": latest_analysis.seo_score if latest_analysis else 0,
+        }
         context["header_action_url"] = reverse("wagtail_optimizer:crawl")
         context["header_action_label"] = _("Crawl")
         context["reports_seo_scores"] = list(
