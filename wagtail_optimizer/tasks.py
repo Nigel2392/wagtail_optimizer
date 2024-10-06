@@ -53,7 +53,8 @@ def run_analyzer(task: Task, title: str = None, notes: str = None, analyzers=Non
         .defer_streamfields()\
         .live()\
         .public()\
-        .select_related("locale")
+        .select_related("locale")\
+        .order_by("id")
     
     progress = ProgressRecorder(task)
     

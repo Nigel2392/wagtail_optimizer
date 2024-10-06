@@ -20,7 +20,6 @@ from .json import (
 )
 
 # Create your models here.
-@register_snippet
 class Analysis(models.Model):
 
     title = models.CharField(
