@@ -8,7 +8,7 @@ from django.core.validators import (
 from wagtail.snippets.models import (
     register_snippet,
 )
-
+from wagtail.fields import RichTextField
 from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
@@ -26,7 +26,13 @@ class Analysis(models.Model):
     title = models.CharField(
         max_length=255,
     )
-    notes = models.TextField(
+    notes = RichTextField(
+        features=[
+            "bold", "italic", "link",
+            "h2", "h3", "h4", "h5", "h6",
+            "ol", "ul", "blockquote",
+            "image", "document-link",
+        ],
         blank=True,
         null=True
     )

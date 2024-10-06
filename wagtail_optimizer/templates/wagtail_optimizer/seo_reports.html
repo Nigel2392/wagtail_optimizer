@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="{% static 'wagtail_optimizer/css/wagtail_optimizer.css' %}">
 {% endblock %}
 
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'wagtail_optimizer/js/chart.min.js' %}"></script>
+    <script src="{% static 'wagtail_optimizer/js/seo_reports.js' %}"></script>
+    {{ reports_seo_scores|json_script:"reports-seo-scores" }}
+{% endblock %}
+
+{% block titletag %}{% translate "SEO Reports" %}{% endblock %}
+
 {% block main_header %}
     <div class="wagtail-optimizer-header">
         {% include "wagtailadmin/shared/header.html" with title=page_title subtitle=page_subtitle icon=header_icon only %}
@@ -21,7 +30,7 @@
 {% block listing %}
     <div class="nice-padding">
         <div class="seo-score-charts">
-        
+            <canvas id="seo-score-chart"></canvas>
         </div>
     </div>
     {{ block.super }}

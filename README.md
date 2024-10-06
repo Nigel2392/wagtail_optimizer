@@ -1,7 +1,7 @@
 wagtail_optimizer
 ================
 
-...
+A SEO tool for your wagtail pages.
 
 Quick start
 -----------
@@ -21,4 +21,4 @@ Quick start
    ]
    ```
 
-3. ...
+3. Check out the new "SEO" tab in your wagtail admin settings menu.

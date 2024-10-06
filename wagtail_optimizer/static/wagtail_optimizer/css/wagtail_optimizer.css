@@ -162,3 +162,8 @@ a.seo-accordion-meta-edit:hover * {
 .seo-panel details .seo-summary-meta {
     font-size: 0.725rem;
 }
+.seo-score-charts {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: max(30%, 300px);
+}

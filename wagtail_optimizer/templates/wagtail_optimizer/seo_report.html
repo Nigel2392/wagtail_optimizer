@@ -20,8 +20,15 @@
     {% endif %}
     
     {% include "wagtailadmin/shared/header.html" with title=view.get_page_title subtitle=view.get_page_subtitle action_url=view.action_url icon=view.page_image action_text=view.action_text search_url=view.search_url %}
-    
+
     <div class="nice-padding">
+        
+        {% if analysis.notes %}
+            {% translate "Notes" as notes_text %}
+            {% panel id="notes" heading=notes_text classname="collapsible collapsed" %}
+                <p>{{ analysis.notes|richtext }}</p>
+            {% endpanel %}
+        {% endif %}
 
         <div class="analysis-info">
             <div class="analysis-info-box">
@@ -45,7 +52,6 @@
                 <p class="analysis-info-box-text">{% translate "Single-page warnings" %}</p>
             </div>
         </div>
-
         
         <div class="seo-report">
             {% for obj in pages %}
@@ -87,6 +93,7 @@
 
                         </div>
                     </div>
+
                     <div class="seo-panel">
                             
                         {% help_block status="warning" %}

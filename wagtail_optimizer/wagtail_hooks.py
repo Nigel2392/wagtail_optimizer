@@ -1,5 +1,6 @@
-from collections import OrderedDict
 import itertools
+from collections import OrderedDict
+from django.db import models
 from django.urls import path, include, reverse, reverse_lazy
 from django.http import JsonResponse
 from django.views.generic import TemplateView
@@ -65,10 +66,21 @@ class SEOReportsView(BaseListingView):
     ]
 
     def get_context_data(self, *args, **kwargs):
-        return super().get_context_data(*args, **kwargs) | {
-            "header_action_url": reverse("wagtail_optimizer:crawl"),
-            "header_action_label": _("Crawl"),
-        }
+        context = super().get_context_data(*args, **kwargs)
+
+        page_obj = context["page_obj"]
+        object_list = page_obj.object_list
+
+        reports_seo_scores = object_list\
+            .values("created_at", "seo_score")
+        
+        context["header_action_url"] = reverse("wagtail_optimizer:crawl")
+        context["header_action_label"] = _("Crawl")
+        context["reports_seo_scores"] = list(
+            reversed(reports_seo_scores),
+        )
+
+        return context
 
     
 class SEOCrawlView(WagtailAdminTemplateMixin, TemplateView):

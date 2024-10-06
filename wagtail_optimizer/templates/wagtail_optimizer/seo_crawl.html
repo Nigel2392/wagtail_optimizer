@@ -6,11 +6,13 @@
 {% block extra_css %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'wagtail_optimizer/css/wagtail_optimizer.css' %}">
+    {{ form.media.css }}
 {% endblock %}
 
 {% block extra_js %}
     {{ block.super }}
     <script src="{% static 'wagtail_optimizer/js/seo_crawl.js' %}"></script>
+    {{ form.media.js }}
 {% endblock %}
 
 {% block content %}
