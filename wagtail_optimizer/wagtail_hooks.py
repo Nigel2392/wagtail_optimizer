@@ -74,10 +74,20 @@ class SEOReportsView(BaseListingView):
         reports_seo_scores = object_list\
             .values("created_at", "seo_score")
         
+        reports_error_counts = object_list\
+            .annotate(
+                error_count=models.F("mpe_count") + models.F("spe_count"),
+                warning_count=models.F("mpw_count") + models.F("spw_count"),
+            )\
+            .values("created_at", "error_count", "warning_count")
+        
         context["header_action_url"] = reverse("wagtail_optimizer:crawl")
         context["header_action_label"] = _("Crawl")
         context["reports_seo_scores"] = list(
             reversed(reports_seo_scores),
+        )
+        context["reports_error_counts"] = list(
+            reversed(reports_error_counts),
         )
 
         return context

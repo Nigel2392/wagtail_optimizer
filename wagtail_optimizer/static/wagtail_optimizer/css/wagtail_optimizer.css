@@ -162,8 +162,16 @@ a.seo-accordion-meta-edit:hover * {
 .seo-panel details .seo-summary-meta {
     font-size: 0.725rem;
 }
-.seo-score-charts {
+.seo-charts {
+    gap: 1rem;
     display: flex;
     flex-wrap: wrap;
-    max-width: max(30%, 300px);
+    flex-direction: row;
+    margin-bottom: 1rem;
+}
+.seo-chart {
+    flex: 1 1 auto;
+    max-width: 50%;
+    max-height: 300px;
+    display: flex;
 }
