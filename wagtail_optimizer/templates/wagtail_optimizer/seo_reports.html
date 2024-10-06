@@ -35,9 +35,11 @@
             <div class="seo-chart">
                 <canvas id="seo-score-chart"></canvas>
             </div>
-            <div class="seo-chart">
-                <canvas id="seo-current-score-chart"></canvas>
-            </div>
+            {% if latest_analysis %}
+                <div class="seo-chart">
+                    <canvas id="seo-current-score-chart"></canvas>
+                </div>
+            {% endif %}
             <div class="seo-chart">
                 <canvas id="seo-errors-chart"></canvas>
             </div>

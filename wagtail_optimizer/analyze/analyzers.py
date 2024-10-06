@@ -1,4 +1,5 @@
 from collections import (
+    OrderedDict,
     defaultdict,
 )
 from django.utils.functional import classproperty
@@ -33,7 +34,7 @@ logger = logging.getLogger("wagtail_optimizer")
 
 class AnalyzerRegistry:
     def __init__(self):
-        self.analyzers = {}
+        self.analyzers = OrderedDict()
 
     def register(self, analyzer: type["BaseAnalyzer"] = None, id: str = None):
         if id is None:

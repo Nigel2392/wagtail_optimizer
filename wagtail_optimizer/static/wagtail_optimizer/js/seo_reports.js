@@ -33,7 +33,7 @@ function parseScoreDate(score) {
 document.addEventListener('DOMContentLoaded', function() {
     const scores =parseJSONScript('reports-seo-scores');
     const errors =parseJSONScript('reports-error-counts');
-    const currentScore = parseJSONScript('latest-analysis-seo-score');
+    const analysis = parseJSONScript('latest-analysis-seo-score');
 
     const colorGreen = getCssColorVariable('--w-color-secondary');
     const colorDanger = getCssColorVariable('--w-color-critical-100');
@@ -99,30 +99,43 @@ document.addEventListener('DOMContentLoaded', function() {
     delete configErrors.options.scales.y.suggestedMax;
     delete configErrors.options.plugins.legend.display;
 
-    const configCurrentScore = {
-        "type": "doughnut",
-        "data": {
-            "labels": [currentScore.label],
-            "datasets": [{
-                "data": [currentScore.value, 100 - currentScore.value],
-                "backgroundColor": [colorGreen, colorDanger],
-            }]
-        },
-        "options": {
-            "plugins": {
-                "legend": {
-                    "onClick": (e) => e.stopPropagation(),
-                }
-            },
-        },
-    }
-
     const ctxScore = document.getElementById('seo-score-chart').getContext('2d');
     new Chart(ctxScore, configScore);
 
-    const ctxCurrentScore = document.getElementById('seo-current-score-chart').getContext('2d');
-    new Chart(ctxCurrentScore, configCurrentScore);
-
     const ctxErrors = document.getElementById('seo-errors-chart').getContext('2d');
     new Chart(ctxErrors, configErrors);
+
+    if (analysis) {
+        const configCurrentScore = {
+            "type": "doughnut",
+            "data": {
+                "labels": [
+                    analysis.label,
+                ],
+                "datasets": [{
+                    "data": [analysis.value, 100 - analysis.value],
+                    "backgroundColor": [colorGreen, colorDanger],
+                }]
+            },
+            "options": {
+                "plugins": {
+                    "legend": {
+                        "display": false,
+                    },
+                    "title": {
+                        "display": true,
+                        "text": analysis.title,
+                        "color": getCssColorVariable('--w-color-text'),
+                        "font": {
+                            "size": 16,
+                            "weight": "bold",
+                        },
+                    },
+                },
+            },
+        }
+
+        const ctxCurrentScore = document.getElementById('seo-current-score-chart').getContext('2d');
+        new Chart(ctxCurrentScore, configCurrentScore);
+    };
 });
