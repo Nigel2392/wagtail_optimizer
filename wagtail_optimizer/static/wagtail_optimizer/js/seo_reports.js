@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
             "datasets": [{
                 "label": "SEO Score",
                 "data": scores.map(score => score.seo_score),
-                "fill": false,
                 "borderColor": "rgb(75, 192, 192)",
                 "lineTension": 0.1
             }]
@@ -71,10 +70,20 @@ document.addEventListener('DOMContentLoaded', function() {
     configErrors.data.datasets.push({
         "label": "Warnings",
         "data": errors.map(error => error.warning_count),
-        "fill": false,
         "borderColor": "rgb(255, 205, 86)",
         "lineTension": 0.1
     });
+    configErrors.data.datasets.push({
+        "label": "Aggregate",
+        "data": errors.map(error => error.error_count + error.warning_count),
+        "fill": false,
+        "borderColor": "rgb(92, 27, 153)",
+        "lineTension": 0.1,
+        "hidden": true,
+    });
+
+    delete configErrors.options.scales.y.suggestedMax;
+    delete configErrors.options.plugins.legend.display;
 
     const ctx = document.getElementById('seo-score-chart').getContext('2d');
     new Chart(ctx, config);
