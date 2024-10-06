@@ -10,6 +10,15 @@ function parseJSONScript(id) {
     }
 }
 
+let globalComputedStyles = null;
+
+function getCssColorVariable(name) {
+    if (!globalComputedStyles) {
+        globalComputedStyles = getComputedStyle(document.documentElement);
+    }
+    return globalComputedStyles.getPropertyValue(name);
+}
+
 function parseScoreDate(score) {
     const createdAt = new Date(score.created_at);
     return createdAt.toLocaleDateString('en-GB', {
@@ -26,6 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const errors =parseJSONScript('reports-error-counts');
     const currentScore = parseJSONScript('latest-analysis-seo-score');
 
+    const colorGreen = getCssColorVariable('--w-color-secondary');
+    const colorDanger = getCssColorVariable('--w-color-critical-100');
+    const colorWarning = getCssColorVariable('--w-color-warning-100');
+
     const configScore = {
         "type": "line",
         "data": {
@@ -33,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             "datasets": [{
                 "label": "SEO Score",
                 "data": scores.map(score => score.seo_score),
-                "borderColor": "rgb(75, 192, 192)",
+                "borderColor": colorGreen,
                 "lineTension": 0.1
             }]
         },
@@ -67,11 +80,11 @@ document.addEventListener('DOMContentLoaded', function() {
     configErrors.data.labels = errors.map(parseScoreDate);
     configErrors.data.datasets[0].label = "Errors";
     configErrors.data.datasets[0].data = errors.map(error => error.error_count);
-    configErrors.data.datasets[0].borderColor = "rgb(255, 99, 132)";
+    configErrors.data.datasets[0].borderColor = colorDanger;
     configErrors.data.datasets.push({
         "label": "Warnings",
         "data": errors.map(error => error.warning_count),
-        "borderColor": "rgb(255, 205, 86)",
+        "borderColor": colorWarning,
         "lineTension": 0.1
     });
     configErrors.data.datasets.push({
@@ -92,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             "labels": [currentScore.label],
             "datasets": [{
                 "data": [currentScore.value, 100 - currentScore.value],
-                "backgroundColor": ["rgb(75, 192, 192)", "rgb(255, 99, 132)"],
+                "backgroundColor": [colorGreen, colorDanger],
             }]
         },
         "options": {
