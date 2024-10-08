@@ -1,6 +1,8 @@
 wagtail_optimizer
 ================
 
+![1728371540422](github.com/Nigel2392/wagtail_optimizer/.github/images/README/1728371540422.png)
+
 A SEO tool for your wagtail pages.
 
 Quick start
