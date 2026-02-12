@@ -20,6 +20,7 @@ Quick start
     INSTALLED_APPS = [
     ...,
        'wagtail_optimizer',
+       'django_celery_results',
     ]
     ```
 

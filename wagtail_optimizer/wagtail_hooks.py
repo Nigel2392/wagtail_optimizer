@@ -278,7 +278,7 @@ def register_wagtail_optimizer_urls():
         path('', SEOReportsView.as_view(), name='reports'),
         path('crawl/', SEOCrawlView.as_view(), name='crawl'),
         path('report/<int:pk>/', SEOReportView.as_view(), name='report'),
-        path('progress/<uuid:task_id>/', get_progress, name='progress'),
+        path('progress/<str:task_id>/', get_progress, name='progress'),
     ]
 
     return [
